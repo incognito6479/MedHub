@@ -26,7 +26,7 @@ class ResponderSerializer(serializers.ModelSerializer):
 
 
 class InterrogatorSerializer(serializers.ModelSerializer):
-	responders_obj = ResponderSerializer(many=True, read_only=True, source="responders")
+	# responders_obj = ResponderSerializer(many=True, read_only=True, source="responders")
 	responders_count = serializers.SerializerMethodField('interviewed_count')
 
 	class Meta:
@@ -36,6 +36,8 @@ class InterrogatorSerializer(serializers.ModelSerializer):
 
 	def interviewed_count(self, v):
 		ans = Answer.objects.filter(interrogator_id=v.id).values('id').annotate(Count('interrogator'))
-		if ans:
-			ans = ans[0]['interrogator__count']
-		return 0
+		# print(ans)
+		if ans is None:
+			ans = 0
+		ans = ans[0]['interrogator__count']
+		return ans
